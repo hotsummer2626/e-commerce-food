@@ -1,7 +1,9 @@
 import styled from "styled-components";
+import Auth from "./components/Auth";
 import Wallet from "./components/Wallet";
 import Address from "./components/Address";
 import OrderMenu from "./components/OrderMenu";
+import { useState } from "react";
 
 const Container = styled.div`
     width: 350px;
@@ -11,9 +13,10 @@ const Container = styled.div`
 `;
 
 const Widget = () => {
+    const [isLogin, setIsLogin] = useState(false);
     return (
         <Container>
-            <Wallet />
+            {isLogin ? <Wallet /> : <Auth />}
             <Address />
             <OrderMenu />
         </Container>

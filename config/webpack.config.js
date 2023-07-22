@@ -7,6 +7,7 @@ const TerserWebpackPlugin = require("terser-webpack-plugin");
 const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
+const Dotenv = require('dotenv-webpack');
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -110,6 +111,7 @@ module.exports = {
         //         ],
         //     }),
         !isProduction && new ReactRefreshWebpackPlugin(),
+        new Dotenv(),
     ].filter(Boolean),
     mode: isProduction ? "production" : "development",
     devtool: isProduction ? "source-map" : "cheap-module-source-map",

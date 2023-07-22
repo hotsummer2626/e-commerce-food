@@ -21,7 +21,10 @@ const Transition = ({ children, close }) => {
                 !transition.contains(e.target) &&
                 isShow
             ) {
-                close();
+                setIsShow(false);
+                setTimeout(() => {
+                    close();
+                }, 300);
             }
         };
         document.addEventListener("click", clickEvent);
