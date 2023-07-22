@@ -1,0 +1,20 @@
+@import "swiper/css";
+@import "swiper/css/pagination";
+
+:root {
+  --swiper-theme-color: #f17229;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  overflow: hidden;
+}
+
+li {
+  list-style: none;
+}
