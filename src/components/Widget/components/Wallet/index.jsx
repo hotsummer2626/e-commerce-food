@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoneyBill } from "@fortawesome/free-solid-svg-icons";
 import { colors } from "@/styles/variables";
+import { useSelector } from "react-redux";
 
 const { primaryColor, lightPrimaryColor } = colors;
 
@@ -66,13 +67,15 @@ const IconWrapper = styled.div`
 `;
 
 const Wallet = () => {
+    const { currentUser } = useSelector(({ user }) => user);
+
     return (
         <Container>
             <Title>Your Wallet Balance</Title>
             <Content>
                 <Balance>
                     <span>Balance</span>
-                    <span>A$1200</span>
+                    <span>{`A$${currentUser?.balance || 0}`}</span>
                 </Balance>
                 <Topup>
                     <IconWrapper>

@@ -6,7 +6,7 @@ const Container = styled.div`
     transition: 0.3s ease;
 `;
 
-const Transition = ({ children, close }) => {
+const Transition = ({ children, onClose }) => {
     const [isShow, setIsShow] = useState(false);
 
     useEffect(() => {
@@ -14,6 +14,7 @@ const Transition = ({ children, close }) => {
     }, []);
 
     useEffect(() => {
+        console.log(isShow);
         const transition = document.getElementById("transition");
         const clickEvent = (e) => {
             if (
@@ -23,11 +24,13 @@ const Transition = ({ children, close }) => {
             ) {
                 setIsShow(false);
                 setTimeout(() => {
-                    close();
+                    onClose();
                 }, 300);
             }
         };
-        document.addEventListener("click", clickEvent);
+        if (isShow) {
+            document.addEventListener("click", clickEvent);
+        }
         return () => {
             document.removeEventListener("click", clickEvent);
         };

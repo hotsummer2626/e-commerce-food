@@ -1,8 +1,22 @@
-import axios from "axios";
+import request from "@/utils/request";
 
 export const register = (payload) =>
-    axios({
+    request({
         method: "post",
-        url: `${process.env.SERVER_DOMAIN}/api/users/register`,
+        url: "/users/register",
         data: payload,
-    }).then((res) => res.data);
+    });
+
+export const login = (payload) =>
+    request({
+        method: "post",
+        url: "/users/login",
+        data: payload,
+    });
+
+export const updateUserById = (userId, payload) =>
+    request({
+        method: "put",
+        url: `/users/${userId}`,
+        data: payload,
+    });

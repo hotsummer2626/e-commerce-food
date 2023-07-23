@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { colors } from "@/styles/variables";
 import button from "@/styles/button";
+import { useSelector } from "react-redux";
 
 const { primaryColor, greyColor } = colors;
 
@@ -38,23 +39,29 @@ const Icon = styled.div`
 `;
 
 const Button = styled.div`
-    ${button('outlined')};
+    ${button("outlined")};
     width: 100px;
     padding: 3px;
 `;
 
 const Address = () => {
+    const { currentUser } = useSelector(({ user }) => user);
+
     return (
         <Container>
             <Header>
                 <Title>Your Address</Title>
-                <Button>Change</Button>
+                {currentUser?.address && <Button>Change</Button>}
             </Header>
             <Location>
                 <Icon>
                     <FontAwesomeIcon icon={faLocationDot} />
                 </Icon>
-                <span>address address address address address address</span>
+                <span>
+                    {currentUser?.address
+                        ? currentUser.address
+                        : "No address record yet"}
+                </span>
             </Location>
         </Container>
     );

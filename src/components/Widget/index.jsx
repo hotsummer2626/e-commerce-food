@@ -3,7 +3,7 @@ import Auth from "./components/Auth";
 import Wallet from "./components/Wallet";
 import Address from "./components/Address";
 import OrderMenu from "./components/OrderMenu";
-import { useState } from "react";
+import { useSelector } from "react-redux";
 
 const Container = styled.div`
     width: 350px;
@@ -13,12 +13,19 @@ const Container = styled.div`
 `;
 
 const Widget = () => {
-    const [isLogin, setIsLogin] = useState(false);
+    const { currentUser } = useSelector(({ user }) => user);
+
     return (
         <Container>
-            {isLogin ? <Wallet /> : <Auth />}
-            <Address />
-            <OrderMenu />
+            {currentUser ? (
+                <>
+                    <Wallet />
+                    <Address />
+                    <OrderMenu />
+                </>
+            ) : (
+                <Auth />
+            )}
         </Container>
     );
 };

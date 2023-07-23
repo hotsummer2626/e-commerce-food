@@ -11,6 +11,8 @@ import logoImg from "@/assets/images/logo.jpg";
 import { colors } from "@/styles/variables";
 import button from "@/styles/button";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "@/store/slices/user";
 
 const { primaryColor } = colors;
 
@@ -19,6 +21,8 @@ const Container = styled.div`
     width: 300px;
     height: 100%;
     flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
 `;
 
 const LogoWrapper = styled.div`
@@ -65,6 +69,13 @@ const Link = styled.li`
               `}
 `;
 
+const Logout = styled.div`
+    ${button("outlined")};
+    padding: 15px;
+    margin-top: auto;
+    font-weight: bold;
+`;
+
 const links = [
     {
         icon: faHouse,
@@ -96,6 +107,8 @@ const links = [
 const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { currentUser } = useSelector(({ user }) => user);
+    const dispatch = useDispatch();
 
     return (
         <Container>
@@ -114,6 +127,9 @@ const Navbar = () => {
                     </Link>
                 ))}
             </NavLinks>
+            {currentUser && (
+                <Logout onClick={() => dispatch(logout())}>Logout</Logout>
+            )}
         </Container>
     );
 };

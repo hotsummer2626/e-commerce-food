@@ -1,35 +1,13 @@
 import styled from "styled-components";
 import { register } from "@/services/user";
 import button from "@/styles/button";
-import { colors } from "@/styles/variables";
 import { useState } from "react";
 import { isEmail } from "@/utils/validators";
 import LoadingSpinner from "@/components/shares/LoadingSpinner";
-
-const { primaryColor, lightPrimaryColor, errorColor } = colors;
+import FormInput from "@/components/shares/FormInput";
 
 export const Container = styled.div`
     width: 100%;
-`;
-
-export const InputItem = styled.div`
-    width: 100%;
-    margin-bottom: 10px;
-`;
-
-export const Label = styled.label`
-    display: block;
-    font-size: 15px;
-    font-weight: bold;
-    margin-bottom: 3px;
-`;
-
-export const Input = styled.input`
-    width: 100%;
-    padding: 10px;
-    border-radius: 10px;
-    outline-color: ${primaryColor};
-    border: 2px solid ${lightPrimaryColor};
 `;
 
 export const Button = styled.button`
@@ -45,17 +23,24 @@ export const Button = styled.button`
     gap: 5px;
 `;
 
-export const Error = styled.div`
-    color: ${errorColor};
-    font-size: 12px;
-`;
-
 const inputList = [
     {
         key: "email",
         label: "E-mail address",
         type: "email",
         placeholder: "Please enter your email address",
+    },
+    {
+        key: "firstName",
+        label: "First name",
+        type: "text",
+        placeholder: "Please enter your first name",
+    },
+    {
+        key: "lastName",
+        label: "Last name",
+        type: "text",
+        placeholder: "Please enter your last name",
     },
     {
         key: "password",
@@ -74,6 +59,8 @@ const inputList = [
 const Register = ({ setIsSignInForm }) => {
     const [formValues, setFormValues] = useState({
         email: "",
+        firstName: "",
+        lastName: "",
         password: "",
         reEnterPassword: "",
     });
@@ -81,6 +68,16 @@ const Register = ({ setIsSignInForm }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const onChangeHandler = (key) => (e) => {
+        const hasErrorMessage = validatorMessages.find(
+            (item) => item.key === key
+        );
+
+        if (hasErrorMessage) {
+            setValidatorMessages((prevValidatorMessages) =>
+                prevValidatorMessages.filter((item) => item.key !== key)
+            );
+        }
+
         setFormValues((prev) => ({
             ...prev,
             [key]: e.target.value,
@@ -89,20 +86,25 @@ const Register = ({ setIsSignInForm }) => {
 
     const onSubmitHandler = (e) => {
         e.preventDefault();
-        const { email, password, reEnterPassword } = formValues;
+        const { email, password, firstName, lastName, reEnterPassword } =
+            formValues;
         const errorMessages = [];
 
-        if (!email) {
-            errorMessages.push({
-                key: "email",
-                message: "required",
-            });
-        }
-        if (!password) {
-            errorMessages.push({
-                key: "password",
-                message: "required",
-            });
+        if (
+            !email ||
+            !password ||
+            !firstName ||
+            !lastName ||
+            !reEnterPassword
+        ) {
+            for (const inputItem of inputList) {
+                if (!formValues[inputItem.key]) {
+                    errorMessages.push({
+                        key: inputItem.key,
+                        message: "required",
+                    });
+                }
+            }
         }
         if (email && !isEmail(email)) {
             errorMessages.push({
@@ -123,13 +125,17 @@ const Register = ({ setIsSignInForm }) => {
             setIsLoading(true);
             register({
                 email,
+                name: { first: firstName, last: lastName },
                 password,
             })
                 .then((res) => {
                     setIsLoading(false);
                     setIsSignInForm(true);
                 })
-                .catch((err) => console.log(err));
+                .catch((err) => {
+                    setIsLoading(false);
+                    console.log(err);
+                });
         }
     };
 
@@ -137,32 +143,15 @@ const Register = ({ setIsSignInForm }) => {
         <Container>
             <form onSubmit={onSubmitHandler}>
                 {inputList.map((inputItem) => (
-                    <InputItem key={inputItem.key}>
-                        <Label htmlFor={inputItem.key}>{inputItem.label}</Label>
-                        <Input
-                            id={inputItem.key}
-                            type={inputItem.type}
-                            value={formValues[inputItem.key]}
-                            onChange={onChangeHandler(inputItem.key)}
-                            placeholder={inputItem.placeholder}
-                            autoComplete={
-                                inputItem.type === "password"
-                                    ? "new-password"
-                                    : ""
-                            }
-                        />
-                        {validatorMessages.find(
+                    <FormInput
+                        key={inputItem.key}
+                        inputItem={inputItem}
+                        value={formValues[inputItem.key]}
+                        onChange={onChangeHandler(inputItem.key)}
+                        error={validatorMessages.find(
                             (item) => item.key === inputItem.key
-                        ) && (
-                            <Error>
-                                {
-                                    validatorMessages.find(
-                                        (item) => item.key === inputItem.key
-                                    ).message
-                                }
-                            </Error>
                         )}
-                    </InputItem>
+                    />
                 ))}
                 <Button>
                     {isLoading && <LoadingSpinner />}

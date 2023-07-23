@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { colors } from "@/styles/variables";
+import { useSelector } from "react-redux";
 
 const { primaryColor } = colors;
 
@@ -43,9 +44,15 @@ const Input = styled.input`
 `;
 
 const Searchbar = () => {
+    const { currentUser } = useSelector(({ user }) => user);
+
     return (
         <Container>
-            <Username>Hello, John</Username>
+            <Username>
+                {currentUser
+                    ? `Hello, ${currentUser.name.first}`
+                    : "Please login"}
+            </Username>
             <InputWrapper>
                 <IconWrapper>
                     <FontAwesomeIcon icon={faMagnifyingGlass} />
