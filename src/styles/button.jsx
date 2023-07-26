@@ -8,6 +8,10 @@ const button = (variant) => css`
     text-align: center;
     font-size: 15px;
     cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
     ${() => {
         switch (variant) {
             case "outlined":

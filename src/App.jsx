@@ -2,8 +2,6 @@ import React, { useEffect } from "react";
 import styled from "styled-components";
 import "@/styles/global.scss";
 import Navbar from "./components/Navbar";
-import Searchbar from "./components/Searchbar";
-import Widget from "./components/Widget";
 import { Outlet } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "./store/slices/user";
@@ -15,16 +13,9 @@ const Main = styled.div`
     height: 100vh;
 `;
 
-const Feed = styled.div`
-    flex-grow: 1;
-    background: #f5f5f5;
-    height: 100%;
-    overflow-y: auto;
-    padding: 0 30px 40px;
-`;
-
 const App = () => {
     const { expireTime } = useSelector(({ user }) => user);
+    const { isShow } = useSelector(({ snackbar }) => snackbar);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -42,12 +33,8 @@ const App = () => {
     return (
         <Main>
             <Navbar />
-            <Feed>
-                <Searchbar />
-                <Outlet />
-            </Feed>
-            <Widget />
-            <SnackBar />
+            <Outlet />
+            {isShow && <SnackBar />}
         </Main>
     );
 };

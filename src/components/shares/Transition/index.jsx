@@ -14,7 +14,6 @@ const Transition = ({ children, onClose }) => {
     }, []);
 
     useEffect(() => {
-        console.log(isShow);
         const transition = document.getElementById("transition");
         const clickEvent = (e) => {
             if (

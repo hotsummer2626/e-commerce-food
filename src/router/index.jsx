@@ -1,8 +1,12 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "@/App";
-import Home from "@/components/Home";
-import Menu from "@/components/Menu";
-import Profile from "@/components/Profile";
+import Client from "@/components/Client";
+import Home from "@/components/Client/components/Home";
+import Menu from "@/components/Client/components/Menu";
+import Profile from "@/components/Client/components/Profile";
+import Favorite from "@/components/Client/components/Favorite";
+import OrderHistory from "@/components/Client/components/OrderHistory";
+import Admin from "@/components/Admin";
 
 const router = createBrowserRouter([
     {
@@ -11,15 +15,33 @@ const router = createBrowserRouter([
         children: [
             {
                 path: "/",
-                element: <Home />,
+                element: <Client />,
+                children: [
+                    {
+                        path: "/",
+                        element: <Home />,
+                    },
+                    {
+                        path: "/menu",
+                        element: <Menu />,
+                    },
+                    {
+                        path: "/profile",
+                        element: <Profile />,
+                    },
+                    {
+                        path: "/favorite",
+                        element: <Favorite />,
+                    },
+                    {
+                        path: "/orderHistory",
+                        element: <OrderHistory />,
+                    },
+                ],
             },
             {
-                path: "/menu",
-                element: <Menu />,
-            },
-            {
-                path: "/profile",
-                element: <Profile />,
+                path: "/admin",
+                element: <Admin />,
             },
         ],
     },

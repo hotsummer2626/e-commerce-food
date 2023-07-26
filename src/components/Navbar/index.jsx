@@ -13,6 +13,7 @@ import button from "@/styles/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/store/slices/user";
+import { setSnackbarConfig } from "@/store/slices/snackbar";
 
 const { primaryColor } = colors;
 
@@ -23,6 +24,9 @@ const Container = styled.div`
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
+    @media (max-width: 576px) {
+        display: none;
+    }
 `;
 
 const LogoWrapper = styled.div`
@@ -91,16 +95,19 @@ const links = [
         icon: faHeart,
         label: "Favorite",
         name: "favorite",
+        signInRequired: true,
     },
     {
         icon: faClockRotateLeft,
         label: "Order History",
         name: "orderHistory",
+        signInRequired: true,
     },
     {
         icon: faUser,
         label: "My Profile",
         name: "profile",
+        signInRequired: true,
     },
 ];
 
@@ -120,7 +127,18 @@ const Navbar = () => {
                     <Link
                         key={link.name}
                         active={location.pathname === `/${link.name}`}
-                        onClick={() => navigate(`/${link.name}`)}
+                        onClick={() => {
+                            if (link.signInRequired && !currentUser) {
+                                return dispatch(
+                                    setSnackbarConfig({
+                                        isShow: true,
+                                        type: "error",
+                                        message: "Please sign in",
+                                    })
+                                );
+                            }
+                            navigate(`/${link.name}`);
+                        }}
                     >
                         <FontAwesomeIcon icon={link.icon} />
                         <span>{link.label}</span>

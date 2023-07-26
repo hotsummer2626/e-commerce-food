@@ -4,6 +4,7 @@ import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { colors } from "@/styles/variables";
 import button from "@/styles/button";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 
 const { primaryColor, greyColor } = colors;
 
@@ -46,12 +47,15 @@ const Button = styled.div`
 
 const Address = () => {
     const { currentUser } = useSelector(({ user }) => user);
+    const navigate = useNavigate();
 
     return (
         <Container>
             <Header>
                 <Title>Your Address</Title>
-                {currentUser?.address && <Button>Change</Button>}
+                {currentUser?.address && (
+                    <Button onClick={() => navigate("/profile")}>Change</Button>
+                )}
             </Header>
             <Location>
                 <Icon>

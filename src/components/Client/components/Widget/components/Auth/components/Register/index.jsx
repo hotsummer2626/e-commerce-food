@@ -17,10 +17,6 @@ export const Button = styled.button`
     padding: 15px;
     border: none;
     margin-top: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
 `;
 
 const inputList = [

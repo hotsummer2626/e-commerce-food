@@ -77,10 +77,7 @@ const FilterItem = ({ filterName, options }) => {
                 <FontAwesomeIcon icon={faAngleDown} />
             </Button>
             {isPopupShow && (
-                <Transition
-                    isShow={isPopupShow}
-                    onClose={() => setIsPopupShow(false)}
-                >
+                <Transition onClose={() => setIsPopupShow(false)}>
                     <Popup isShow={isPopupShow}>
                         <OptionWrapper>
                             {options.map((option) => (

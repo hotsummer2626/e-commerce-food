@@ -10,6 +10,9 @@ const Container = styled.div`
     background: #fff;
     flex-shrink: 0;
     padding: 40px 30px;
+    @media (max-width: 576px) {
+        display: none;
+    }
 `;
 
 const Widget = () => {

@@ -1,13 +1,17 @@
 import styled from "styled-components";
-import avatarImg from "@/assets/images/avatar.jpg";
-import FormInput from "../shares/FormInput";
+import FormInput from "@/components/shares/FormInput";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import button from "@/styles/button";
-import LoadingSpinner from "../shares/LoadingSpinner";
+import LoadingSpinner from "@/components/shares/LoadingSpinner";
 import { updateUserById } from "@/services/user";
 import { isEmail, isPhoneNumber } from "@/utils/validators";
 import { updateUser } from "@/store/slices/user";
+import { setSnackbarConfig } from "@/store/slices/snackbar";
+import CroppedImage from "@/components/shares/CroppedImage";
+import defaultAvatarImg from "@/assets/images/default-avatar.jpg";
+import { uploadImage } from "@/services/image";
+import useSignInRequired from "@/hooks/useSignInRequired";
 
 const Container = styled.div`
     width: 100%;
@@ -18,11 +22,6 @@ const Avatar = styled.div`
     padding: 20px;
     display: flex;
     justify-content: center;
-`;
-
-const Image = styled.img`
-    width: 120px;
-    border-radius: 50%;
 `;
 
 const Form = styled.form`
@@ -90,20 +89,32 @@ const inputList = [
 
 const Profile = () => {
     const [formValues, setFormValues] = useState({
+        avatar: {
+            url: "",
+            publicId: "",
+        },
         firstName: "",
         lastName: "",
         email: "",
         phone: "",
         address: "",
     });
+    const [avatarFile, setAvatarFile] = useState(null);
     const [validatorMessages, setValidatorMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const { currentUser } = useSelector(({ user }) => user);
+    const { currentUser } = useSignInRequired();
     const dispatch = useDispatch();
 
     useEffect(() => {
         if (currentUser) {
             setFormValues({
+                avatar:
+                    currentUser.avatar?.url && currentUser.avatar?.publicId
+                        ? currentUser.avatar
+                        : {
+                              url: defaultAvatarImg,
+                              publicId: "",
+                          },
                 firstName: currentUser.name?.first || "",
                 lastName: currentUser.name?.last || "",
                 email: currentUser.email || "",
@@ -136,9 +147,10 @@ const Profile = () => {
         }));
     };
 
-    const onSubmitHandler = (e) => {
+    const onSubmitHandler = async (e) => {
         e.preventDefault();
-        const { firstName, lastName, email, phone, address } = formValues;
+        const { avatar, firstName, lastName, email, phone, address } =
+            formValues;
         const errorMessages = [];
 
         if (!firstName || !lastName || !email) {
@@ -166,32 +178,69 @@ const Profile = () => {
 
         setValidatorMessages(errorMessages);
 
-        if (currentUser && errorMessages.length === 0) {
-            setIsLoading(true);
-            updateUserById(currentUser._id, {
-                name: {
-                    first: firstName,
-                    last: lastName,
-                },
-                email,
-                phone,
-                address,
-            })
-                .then((res) => {
+        try {
+            if (currentUser && errorMessages.length === 0) {
+                setIsLoading(true);
+                let uploadResult = null;
+                if (avatarFile) {
+                    uploadResult = await uploadImage({
+                        file: avatarFile,
+                        publicId: avatar?.publicId || "",
+                        folder: "logo",
+                    });
+                }
+                const avatarConfig = uploadResult
+                    ? {
+                          avatar: {
+                              url: uploadResult.secure_url,
+                              publicId: uploadResult.public_id,
+                          },
+                      }
+                    : {};
+                updateUserById(currentUser._id, {
+                    ...avatarConfig,
+                    name: {
+                        first: firstName,
+                        last: lastName,
+                    },
+                    email,
+                    phone,
+                    address,
+                }).then((res) => {
                     setIsLoading(false);
                     dispatch(updateUser(res));
-                })
-                .catch((err) => {
-                    setIsLoading(false);
-                    console.log(err);
+                    dispatch(
+                        setSnackbarConfig({
+                            isShow: true,
+                            type: "success",
+                            message: "Successfully update your profile",
+                        })
+                    );
                 });
+            }
+        } catch (error) {
+            setIsLoading(false);
+            dispatch(
+                setSnackbarConfig({
+                    isShow: true,
+                    type: "error",
+                    message: error.response.data.error,
+                })
+            );
         }
     };
 
-    return (
+    return currentUser ? (
         <Container>
             <Avatar>
-                <Image src={avatarImg} alt="avatar" />
+                <CroppedImage
+                    initialImgSrc={formValues.avatar?.url}
+                    width="120px"
+                    aspect={1}
+                    onConfirm={(croppedImgFile) =>
+                        setAvatarFile(croppedImgFile)
+                    }
+                />
             </Avatar>
             <Form onSubmit={onSubmitHandler}>
                 {inputList.map((inputItem) => (
@@ -215,7 +264,7 @@ const Profile = () => {
                 </Button>
             </Form>
         </Container>
-    );
+    ) : null;
 };
 
 export default Profile;
