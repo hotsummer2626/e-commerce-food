@@ -14,7 +14,7 @@ export const login = (payload) =>
         data: payload,
     });
 
-export const updateUserById = (userId, payload) =>
+export const updateById = (userId, payload) =>
     request({
         method: "put",
         url: `/users/${userId}`,

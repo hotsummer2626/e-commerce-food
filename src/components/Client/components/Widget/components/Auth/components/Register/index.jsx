@@ -5,6 +5,8 @@ import { useState } from "react";
 import { isEmail } from "@/utils/validators";
 import LoadingSpinner from "@/components/shares/LoadingSpinner";
 import FormInput from "@/components/shares/FormInput";
+import { setSnackbarConfig } from "@/store/slices/snackbar";
+import { useDispatch } from "react-redux";
 
 export const Container = styled.div`
     width: 100%;
@@ -62,6 +64,7 @@ const Register = ({ setIsSignInForm }) => {
     });
     const [validatorMessages, setValidatorMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const dispatch = useDispatch();
 
     const onChangeHandler = (key) => (e) => {
         const hasErrorMessage = validatorMessages.find(
@@ -124,13 +127,26 @@ const Register = ({ setIsSignInForm }) => {
                 name: { first: firstName, last: lastName },
                 password,
             })
-                .then((res) => {
+                .then(() => {
                     setIsLoading(false);
                     setIsSignInForm(true);
+                    dispatch(
+                        setSnackbarConfig({
+                            isShow: true,
+                            type: "success",
+                            message: "Successfully registered",
+                        })
+                    );
                 })
                 .catch((err) => {
                     setIsLoading(false);
-                    console.log(err);
+                    dispatch(
+                        setSnackbarConfig({
+                            isShow: true,
+                            type: "error",
+                            message: err.response.data.error,
+                        })
+                    );
                 });
         }
     };

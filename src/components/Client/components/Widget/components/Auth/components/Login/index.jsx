@@ -3,9 +3,8 @@ import { Container, Button } from "../Register";
 import LoadingSpinner from "@/components/shares/LoadingSpinner";
 import FormInput from "@/components/shares/FormInput";
 import { isEmail } from "@/utils/validators";
-import { login } from "@/services/user";
-import { useDispatch } from "react-redux";
-import { login as reduxLogin } from "@/store/slices/user";
+import { useDispatch, useSelector } from "react-redux";
+import { userLogin } from "@/store/slices/user";
 
 const inputList = [
     {
@@ -28,7 +27,7 @@ const Login = () => {
         password: "",
     });
     const [validatorMessages, setValidatorMessages] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const { status } = useSelector(({ user }) => user);
     const dispatch = useDispatch();
 
     const onChangeHandler = (key) => (e) => {
@@ -75,19 +74,7 @@ const Login = () => {
         setValidatorMessages(errorMessages);
 
         if (errorMessages.length === 0) {
-            setIsLoading(true);
-            login({
-                email,
-                password,
-            })
-                .then((res) => {
-                    setIsLoading(false);
-                    dispatch(reduxLogin(res));
-                })
-                .catch((err) => {
-                    setIsLoading(false);
-                    console.log(err);
-                });
+            dispatch(userLogin({ email, password }));
         }
     };
 
@@ -106,7 +93,7 @@ const Login = () => {
                     />
                 ))}
                 <Button>
-                    {isLoading && <LoadingSpinner />}
+                    {status === "pending" && <LoadingSpinner />}
                     Sign Up
                 </Button>
             </form>

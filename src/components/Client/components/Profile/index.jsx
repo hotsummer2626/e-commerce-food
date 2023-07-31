@@ -4,10 +4,8 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import button from "@/styles/button";
 import LoadingSpinner from "@/components/shares/LoadingSpinner";
-import { updateUserById } from "@/services/user";
 import { isEmail, isPhoneNumber } from "@/utils/validators";
-import { updateUser } from "@/store/slices/user";
-import { setSnackbarConfig } from "@/store/slices/snackbar";
+import { updateUserById } from "@/store/slices/user";
 import CroppedImage from "@/components/shares/CroppedImage";
 import defaultAvatarImg from "@/assets/images/default-avatar.jpg";
 import { uploadImage } from "@/services/image";
@@ -19,7 +17,7 @@ const Container = styled.div`
 
 const Avatar = styled.div`
     width: 100%;
-    padding: 20px;
+    padding: 20px 0;
     display: flex;
     justify-content: center;
 `;
@@ -149,6 +147,7 @@ const Profile = () => {
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
         const { avatar, firstName, lastName, email, phone, address } =
             formValues;
         const errorMessages = [];
@@ -178,56 +177,41 @@ const Profile = () => {
 
         setValidatorMessages(errorMessages);
 
-        try {
-            if (currentUser && errorMessages.length === 0) {
-                setIsLoading(true);
-                let uploadResult = null;
-                if (avatarFile) {
-                    uploadResult = await uploadImage({
-                        file: avatarFile,
-                        publicId: avatar?.publicId || "",
-                        folder: "logo",
-                    });
-                }
-                const avatarConfig = uploadResult
-                    ? {
-                          avatar: {
-                              url: uploadResult.secure_url,
-                              publicId: uploadResult.public_id,
-                          },
-                      }
-                    : {};
-                updateUserById(currentUser._id, {
-                    ...avatarConfig,
-                    name: {
-                        first: firstName,
-                        last: lastName,
-                    },
-                    email,
-                    phone,
-                    address,
-                }).then((res) => {
-                    setIsLoading(false);
-                    dispatch(updateUser(res));
-                    dispatch(
-                        setSnackbarConfig({
-                            isShow: true,
-                            type: "success",
-                            message: "Successfully update your profile",
-                        })
-                    );
+        if (currentUser && errorMessages.length === 0) {
+            let uploadResult = null;
+            if (avatarFile) {
+                uploadResult = await uploadImage({
+                    file: avatarFile,
+                    publicId: avatar?.publicId || "",
+                    folder: "logo",
                 });
             }
-        } catch (error) {
-            setIsLoading(false);
+            const avatarConfig = uploadResult
+                ? {
+                      avatar: {
+                          url: uploadResult.secure_url,
+                          publicId: uploadResult.public_id,
+                      },
+                  }
+                : {};
+            const newUser = {
+                ...avatarConfig,
+                name: {
+                    first: firstName,
+                    last: lastName,
+                },
+                email,
+                phone,
+                address,
+            };
             dispatch(
-                setSnackbarConfig({
-                    isShow: true,
-                    type: "error",
-                    message: error.response.data.error,
+                updateUserById({
+                    userId: currentUser._id,
+                    newUser,
                 })
             );
         }
+        setIsLoading(false);
     };
 
     return currentUser ? (
@@ -237,6 +221,7 @@ const Profile = () => {
                     initialImgSrc={formValues.avatar?.url}
                     width="120px"
                     aspect={1}
+                    shape="round"
                     onConfirm={(croppedImgFile) =>
                         setAvatarFile(croppedImgFile)
                     }

@@ -6,6 +6,7 @@ import {
     faHeart,
     faClockRotateLeft,
     faUser,
+    faBowlFood,
 } from "@fortawesome/free-solid-svg-icons";
 import logoImg from "@/assets/images/logo.jpg";
 import { colors } from "@/styles/variables";
@@ -80,36 +81,49 @@ const Logout = styled.div`
     font-weight: bold;
 `;
 
-const links = [
-    {
-        icon: faHouse,
-        label: "Home",
-        name: "",
-    },
-    {
-        icon: faUtensils,
-        label: "Menu",
-        name: "menu",
-    },
-    {
-        icon: faHeart,
-        label: "Favorite",
-        name: "favorite",
-        signInRequired: true,
-    },
-    {
-        icon: faClockRotateLeft,
-        label: "Order History",
-        name: "orderHistory",
-        signInRequired: true,
-    },
-    {
-        icon: faUser,
-        label: "My Profile",
-        name: "profile",
-        signInRequired: true,
-    },
-];
+const getLinks = (role) => {
+    switch (role) {
+        case "admin":
+            return [
+                {
+                    icon: faBowlFood,
+                    label: "Products",
+                    path: "/admin/products",
+                },
+            ];
+        default:
+            return [
+                {
+                    icon: faHouse,
+                    label: "Home",
+                    path: "/",
+                },
+                {
+                    icon: faUtensils,
+                    label: "Menu",
+                    path: "/menu",
+                },
+                {
+                    icon: faHeart,
+                    label: "Favorite",
+                    path: "/favorite",
+                    signInRequired: true,
+                },
+                {
+                    icon: faClockRotateLeft,
+                    label: "Order History",
+                    path: "/orderHistory",
+                    signInRequired: true,
+                },
+                {
+                    icon: faUser,
+                    label: "My Profile",
+                    path: "/profile",
+                    signInRequired: true,
+                },
+            ];
+    }
+};
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -123,10 +137,10 @@ const Navbar = () => {
                 <Logo src={logoImg} alt="logo" />
             </LogoWrapper>
             <NavLinks>
-                {links.map((link) => (
+                {getLinks(currentUser?.role).map((link) => (
                     <Link
-                        key={link.name}
-                        active={location.pathname === `/${link.name}`}
+                        key={link.path}
+                        active={location.pathname === link.path}
                         onClick={() => {
                             if (link.signInRequired && !currentUser) {
                                 return dispatch(
@@ -137,7 +151,7 @@ const Navbar = () => {
                                     })
                                 );
                             }
-                            navigate(`/${link.name}`);
+                            navigate(link.path);
                         }}
                     >
                         <FontAwesomeIcon icon={link.icon} />

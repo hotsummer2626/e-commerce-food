@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import "@/styles/global.scss";
 import Navbar from "./components/Navbar";
 import { Outlet } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { logout } from "./store/slices/user";
+import { useSelector } from "react-redux";
 import SnackBar from "./components/Snackbar";
+import useUser from "./hooks/useUser";
 
 const Main = styled.div`
     display: flex;
@@ -14,21 +14,8 @@ const Main = styled.div`
 `;
 
 const App = () => {
-    const { expireTime } = useSelector(({ user }) => user);
+    useUser();
     const { isShow } = useSelector(({ snackbar }) => snackbar);
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        const timeout = expireTime - Date.now();
-        if (timeout < 10000) {
-            dispatch(logout());
-            return;
-        }
-        const timer = setTimeout(() => {
-            dispatch(logout());
-        }, timeout);
-        return () => clearTimeout(timer);
-    }, []);
 
     return (
         <Main>

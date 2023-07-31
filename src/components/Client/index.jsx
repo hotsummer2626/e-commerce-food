@@ -1,9 +1,11 @@
 import styled from "styled-components";
-import Searchbar from "./components/Searchbar";
+import Header from "./components/Header";
 import { Outlet } from "react-router-dom";
 import Widget from "./components/Widget";
+import scrollbar from "@/styles/scrollbar";
 
 const Feed = styled.div`
+    ${scrollbar()};
     flex-grow: 1;
     background: #f5f5f5;
     height: 100%;
@@ -15,7 +17,7 @@ const Client = () => {
     return (
         <>
             <Feed>
-                <Searchbar />
+                <Header />
                 <Outlet />
             </Feed>
             <Widget />

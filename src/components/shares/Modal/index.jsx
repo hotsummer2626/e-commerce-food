@@ -1,12 +1,22 @@
-import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import { useEffect, useRef, useState } from "react";
 
 const Container = styled.div`
     opacity: ${({ isShow }) => (isShow ? "1" : "0")};
-    transition: 0.3s ease;
+    position: fixed;
+    top: 10vh;
+    left: calc(50vw - 250px);
+    z-index: 9999;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    transition: opacity 0.3s ease;
 `;
 
-const Transition = ({ children, onClose }) => {
+const Modal = ({ onClose, children }) => {
     const [isShow, setIsShow] = useState(false);
     const transitionRef = useRef(null);
 
@@ -43,4 +53,4 @@ const Transition = ({ children, onClose }) => {
     );
 };
 
-export default Transition;
+export default Modal;

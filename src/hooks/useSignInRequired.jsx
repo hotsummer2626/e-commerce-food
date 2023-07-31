@@ -4,7 +4,7 @@ import { setSnackbarConfig } from "@/store/slices/snackbar";
 import { useNavigate } from "react-router";
 
 const useSignInRequired = () => {
-    const { currentUser } = useSelector(({ user }) => user);
+    const { currentUser, status } = useSelector(({ user }) => user);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -21,7 +21,7 @@ const useSignInRequired = () => {
         }
     }, [currentUser]);
 
-    return { currentUser };
+    return { currentUser, status };
 };
 
 export default useSignInRequired;

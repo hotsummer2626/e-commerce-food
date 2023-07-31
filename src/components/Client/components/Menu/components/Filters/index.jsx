@@ -1,11 +1,9 @@
 import styled from "styled-components";
-import FilterItem from "./components/FilterItem";
+import Filter from "@/components/shares/Filter";
+import { useState } from "react";
 
 const Container = styled.div`
     width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 10px;
     padding: 5px 0 10px;
     position: sticky;
     top: 92px;
@@ -15,30 +13,29 @@ const Container = styled.div`
 
 const filterList = [
     {
-        filterName: "Category",
+        key: "category",
+        name: "Category",
         options: [
-            { label: "Bakery" },
-            { label: "Burger" },
-            { label: "Beverage" },
+            { label: "Bakery", value: "bakery" },
+            { label: "Burger", value: "burger" },
+            { label: "Beverage", value: "beverage" },
         ],
-    },
-    {
-        filterName: "Ingredient",
-        options: [{ label: "Beef" }, { label: "Chicken" }],
     },
 ];
 
 const Filters = () => {
+    const [filterValues, setFilterValues] = useState({
+        category: "",
+        ingredient: "",
+    });
+
     return (
         <Container>
-            <h3>Filters:</h3>
-            {filterList.map((filterItem) => (
-                <FilterItem
-                    key={filterItem.filterName}
-                    filterName={filterItem.filterName}
-                    options={filterItem.options}
-                />
-            ))}
+            <Filter
+                filterList={filterList}
+                initialValues={filterValues}
+                onChange={(values) => setFilterValues(values)}
+            />
         </Container>
     );
 };

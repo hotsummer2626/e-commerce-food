@@ -7,18 +7,13 @@ import getCroppedImgBlob from "./helpers/getCroppedImgSrc";
 import centerAspectCrop from "./helpers/centerAspectCrop";
 import { colors } from "@/styles/variables";
 import button from "@/styles/button";
-import Transition from "@/components/shares/Transition";
 import LoadingSpinner from "../LoadingSpinner";
+import Modal from "@/components/shares/Modal";
 
 const { primaryColor } = colors;
 
 const Container = styled.div`
     position: relative;
-    width: max-content;
-`;
-
-const Image = styled.img`
-    border-radius: 50%;
 `;
 
 const EditIcon = styled.div`
@@ -35,20 +30,6 @@ const EditIcon = styled.div`
     position: absolute;
     bottom: 0;
     right: 0;
-`;
-
-const Popup = styled.div`
-    position: fixed;
-    top: 40vh;
-    left: 50vw;
-    z-index: 9999;
-    max-width: 500px;
-    width: 100%;
-    border-radius: 10px;
-    background: #fff;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    padding: 10px;
 `;
 
 const ButtonGroup = styled.div`
@@ -69,7 +50,13 @@ const ConfirmButton = styled.div`
     padding: 6px;
 `;
 
-const CroppedImage = ({ initialImgSrc, width, aspect = 16 / 9, onConfirm }) => {
+const CroppedImage = ({
+    initialImgSrc,
+    width,
+    aspect = 16 / 9,
+    shape = "round",
+    onConfirm,
+}) => {
     const [imgSrc, setImgSrc] = useState("");
     const [crop, setCrop] = useState();
     const [completedCrop, setCompletedCrop] = useState();
@@ -87,9 +74,9 @@ const CroppedImage = ({ initialImgSrc, width, aspect = 16 / 9, onConfirm }) => {
         if (e.target.files && e.target.files.length > 0) {
             setCrop(undefined);
             const reader = new FileReader();
-            reader.addEventListener("load", () =>
-                setImgSrc(reader.result?.toString() || "")
-            );
+            reader.addEventListener("load", () => {
+                setImgSrc(reader.result?.toString() || "");
+            });
             reader.readAsDataURL(e.target.files[0]);
         }
     };
@@ -124,7 +111,7 @@ const CroppedImage = ({ initialImgSrc, width, aspect = 16 / 9, onConfirm }) => {
                     const fileName = `logo-${lastModified}`;
                     const file = new File([blob], fileName, {
                         lastModified,
-                        type: "image/png",
+                        type: "image/jpg",
                     });
                     onConfirm(file);
                     setImgSrc("");
@@ -134,12 +121,14 @@ const CroppedImage = ({ initialImgSrc, width, aspect = 16 / 9, onConfirm }) => {
     };
 
     return (
-        <Container>
-            <Image
+        <Container style={{ width }}>
+            <img
                 src={displayImgSrc}
                 style={{
-                    width,
+                    verticalAlign: "top",
+                    width: "100%",
                     aspectRatio: aspect,
+                    borderRadius: shape === "round" ? "50%" : "",
                 }}
                 alt="avatar"
             />
@@ -157,6 +146,7 @@ const CroppedImage = ({ initialImgSrc, width, aspect = 16 / 9, onConfirm }) => {
                 accept="image/*"
                 style={{ display: "none" }}
                 ref={inputFileRef}
+                onClick={(e) => (e.target.value = "")}
                 onChange={onSelectFile}
             />
             <canvas
@@ -166,32 +156,35 @@ const CroppedImage = ({ initialImgSrc, width, aspect = 16 / 9, onConfirm }) => {
                 }}
             />
             {!!imgSrc && (
-                <Transition onClose={() => setImgSrc("")}>
-                    <Popup>
-                        <ReactCrop
-                            crop={crop}
-                            onChange={(_, percentCrop) => setCrop(percentCrop)}
-                            onComplete={(c) => setCompletedCrop(c)}
-                            aspect={aspect}
+                <Modal onClose={() => setImgSrc("")}>
+                    <ReactCrop
+                        crop={crop}
+                        onChange={(_, percentCrop) => setCrop(percentCrop)}
+                        onComplete={(c) => setCompletedCrop(c)}
+                        aspect={aspect}
+                    >
+                        <img
+                            ref={imgRef}
+                            alt="Crop me"
+                            src={imgSrc}
+                            onLoad={onImageLoad}
+                        />
+                    </ReactCrop>
+                    <ButtonGroup>
+                        <CancelButton
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setImgSrc("");
+                            }}
                         >
-                            <img
-                                ref={imgRef}
-                                alt="Crop me"
-                                src={imgSrc}
-                                onLoad={onImageLoad}
-                            />
-                        </ReactCrop>
-                        <ButtonGroup>
-                            <CancelButton onClick={() => setImgSrc("")}>
-                                Cancel
-                            </CancelButton>
-                            <ConfirmButton onClick={onConfirmHandler}>
-                                {isLoading && <LoadingSpinner />}
-                                Confirm
-                            </ConfirmButton>
-                        </ButtonGroup>
-                    </Popup>
-                </Transition>
+                            Cancel
+                        </CancelButton>
+                        <ConfirmButton onClick={onConfirmHandler}>
+                            {isLoading && <LoadingSpinner />}
+                            Confirm
+                        </ConfirmButton>
+                    </ButtonGroup>
+                </Modal>
             )}
         </Container>
     );

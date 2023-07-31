@@ -7,6 +7,7 @@ import Profile from "@/components/Client/components/Profile";
 import Favorite from "@/components/Client/components/Favorite";
 import OrderHistory from "@/components/Client/components/OrderHistory";
 import Admin from "@/components/Admin";
+import Products from "@/components/Admin/components/Products";
 
 const router = createBrowserRouter([
     {
@@ -42,6 +43,12 @@ const router = createBrowserRouter([
             {
                 path: "/admin",
                 element: <Admin />,
+                children: [
+                    {
+                        path: "/admin/products",
+                        element: <Products />,
+                    },
+                ],
             },
         ],
     },
