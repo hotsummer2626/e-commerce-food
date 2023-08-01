@@ -23,13 +23,13 @@ const Select = styled.select`
     border: 2px solid ${lightPrimaryColor};
 `;
 
-const FormSelect = ({ inputItem, onChange }) => {
+const FormSelect = ({ inputItem, onChange, value }) => {
     return (
         <InputItem>
             <Label htmlFor={inputItem.key}>{inputItem.label}</Label>
-            <Select id={inputItem.key} onChange={onChange}>
-                {inputItem.options.map((option, index) => (
-                    <option value={option.value} selected={index === 0}>
+            <Select id={inputItem.key} onChange={onChange} value={value}>
+                {inputItem.options.map((option) => (
+                    <option key={option.value} value={option.value}>
                         {option.label}
                     </option>
                 ))}

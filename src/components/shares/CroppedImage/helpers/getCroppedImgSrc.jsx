@@ -32,7 +32,7 @@ const getCroppedImgBlob = (image, canvas, crop, callback) => {
         image.naturalHeight
     );
 
-    canvas.toBlob((blob) => callback(blob), "image/*", 1);
+    canvas.toBlob((blob) => callback(blob), "image/jpeg", 0.8);
 };
 
 export default getCroppedImgBlob;

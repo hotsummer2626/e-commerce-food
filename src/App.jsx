@@ -6,6 +6,7 @@ import { Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import SnackBar from "./components/Snackbar";
 import useUser from "./hooks/useUser";
+import useProduct from "./hooks/useProduct";
 
 const Main = styled.div`
     display: flex;
@@ -15,6 +16,7 @@ const Main = styled.div`
 
 const App = () => {
     useUser();
+    useProduct();
     const { isShow } = useSelector(({ snackbar }) => snackbar);
 
     return (

@@ -12,7 +12,7 @@ const Container = styled.div`
     border-radius: 10px;
     background: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    padding: 10px;
+    padding: 30px;
     transition: opacity 0.3s ease;
 `;
 

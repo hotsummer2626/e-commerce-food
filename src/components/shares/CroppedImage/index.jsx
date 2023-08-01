@@ -111,7 +111,7 @@ const CroppedImage = ({
                     const fileName = `logo-${lastModified}`;
                     const file = new File([blob], fileName, {
                         lastModified,
-                        type: "image/jpg",
+                        type: "image/jpeg",
                     });
                     onConfirm(file);
                     setImgSrc("");

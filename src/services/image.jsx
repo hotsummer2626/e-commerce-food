@@ -12,3 +12,10 @@ export const uploadImage = (payload) => {
         data: formData,
     });
 };
+
+export const deleteImageByPublicId = (publicId) =>
+    request({
+        method: "delete",
+        url: "/images",
+        data: { publicId },
+    });

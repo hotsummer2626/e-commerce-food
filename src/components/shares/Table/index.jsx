@@ -5,7 +5,6 @@ const { primaryColor, greyColor } = colors;
 
 const Row = styled.div`
     width: 100%;
-    padding: 15px 10px;
     display: flex;
     align-items: center;
     border-bottom: 1px solid ${greyColor};
@@ -17,10 +16,13 @@ const Row = styled.div`
                   font-weight: bold;
                   border-radius: 10px;
                   position: sticky;
+                  z-index: 9;
                   top: 0;
+                  padding: 15px 10px;
               `
             : css`
                   background: transparent;
+                  padding: 5px 10px;
               `}
 `;
 
